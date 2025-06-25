@@ -1,0 +1,14 @@
+Sub Task,Estimated Hours,Actual Hours
+API Setup & Project Init,0.8999999999999999,1.1
+Auth & Security,0.6,0.7
+DB Schema & Seeding,0.8999999999999999,1.0
+Core API Development,1.8,2.1
+Logging & Error Handling,0.5,0.5
+AI Suggest Endpoint,0.4,0.5
+Frontend Setup & Auth,0.7,0.9
+Task Management UI,2.5,3.1
+Frontend Finalization,0.3,0.4
+Containerization & Compose,0.8999999999999999,1.2000000000000002
+Cloud Deployment,0.8999999999999999,1.1
+Documentation & Demo,2.5,3.0
+TOTAL,12.9,15.6
