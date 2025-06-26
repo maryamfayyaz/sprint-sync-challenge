@@ -14,5 +14,6 @@ RUN npx prisma generate
 ENV NODE_ENV=production
 
 EXPOSE 3000
+RUN npx prisma generate && npx prisma migrate deploy && npm run prisma:seed
 
 CMD ["node", "app.js"]

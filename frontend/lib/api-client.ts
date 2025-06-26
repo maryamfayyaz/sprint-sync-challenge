@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://localhost:3001"
+export const API_BASE_URL = "https://sprint-sync-challenge.onrender.com"
 
 class ApiClient {
   private getAuthHeaders() {
