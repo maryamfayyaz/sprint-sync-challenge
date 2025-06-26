@@ -70,7 +70,6 @@ router.post(
         temperature: 0.7,
         max_tokens: 300,
       });
-      console.log("OpenAI response:", completion);
 
       const raw = completion.choices[0].message.content.trim();
 
