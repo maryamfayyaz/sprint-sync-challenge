@@ -4,6 +4,9 @@ SprintSync is a modern task management application with full-stack capabilities 
 
 ---
 
+### 🔗 Live URL
+Visit the live version of the app here: [https://sprint-sync-challenge.onrender.com](https://sprint-sync-challenge.onrender.com)
+
 ## 📂 Project Structure
 
 ```
