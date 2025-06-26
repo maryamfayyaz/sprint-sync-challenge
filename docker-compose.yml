@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    container_name: sprintsync-db
+    environment:
+      POSTGRES_DB: sprintsync
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      - postgres
+    container_name: sprintsync-backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/sprintsync
+      JWT_SECRET: aksdjhaskjdhaskhjdaisdhkaskjdhkaskdasjh
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "
+        npx prisma generate &&
+        npx prisma migrate deploy &&
+        npm run prisma:seed &&
+        node app.js
+      "
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: sprintsync-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
