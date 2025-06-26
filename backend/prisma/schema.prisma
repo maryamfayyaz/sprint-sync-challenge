@@ -32,6 +32,8 @@ model Task {
   userId       Int
   user         User     @relation(fields: [userId], references: [id])
   createdAt    DateTime @default(now())
+  inProgressAt  DateTime?
+  completedAt   DateTime?
 }
 
 enum TaskStatus {

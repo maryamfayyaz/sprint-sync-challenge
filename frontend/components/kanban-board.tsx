@@ -51,38 +51,65 @@ export function KanbanBoard({ tasks, onStatusChange, onEdit, onDelete, canDelete
     tasks: Task[]
     status: string
     color: string
-  }) => (
-    <Card className="flex-1 min-w-0 h-fit" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, status)}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">{title}</CardTitle>
-          <Badge variant="secondary" className={color}>
-            {tasks.length}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-3 min-h-[400px]">
-        {tasks.map((task) => (
-          <div key={task.id} draggable onDragStart={(e) => handleDragStart(e, task)} className="cursor-move">
-            <TaskCard
-              task={task}
-              onStatusChange={onStatusChange}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              isDragging={draggedTask?.id === task.id}
-              canDelete={canDelete}
-            />
+  }) => {
+    const getColumnStats = () => {
+      const totalMinutes = tasks.reduce((sum, task) => sum + (task.totalMinutes || 0), 0)
+      const recentlyUpdated = tasks.filter((task) => {
+        const relevantDate = task.completedAt || task.inProgressAt || task.updatedAt
+        if (!relevantDate) return false
+        const daysDiff = (Date.now() - new Date(relevantDate).getTime()) / (1000 * 60 * 60 * 24)
+        return daysDiff <= 1
+      }).length
+
+      return { totalMinutes, recentlyUpdated }
+    }
+
+    const stats = getColumnStats()
+
+    return (
+      <Card className="flex-1 min-w-0 h-fit" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, status)}>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className={color}>
+                {tasks.length}
+              </Badge>
+              {stats.recentlyUpdated > 0 && (
+                <Badge variant="outline" className="text-xs">
+                  {stats.recentlyUpdated} recent
+                </Badge>
+              )}
+            </div>
           </div>
-        ))}
-        {tasks.length === 0 && (
-          <div className="text-center text-gray-400 py-12 border-2 border-dashed border-gray-200 rounded-lg">
-            <p>Drop tasks here</p>
-            <p className="text-sm">or create a new one</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  )
+          {stats.totalMinutes > 0 && (
+            <p className="text-xs text-gray-500">{Math.round((stats.totalMinutes / 60) * 10) / 10}h logged</p>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-3 min-h-[400px]">
+          {tasks.map((task) => (
+            <div key={task.id} draggable onDragStart={(e) => handleDragStart(e, task)} className="cursor-move">
+              <TaskCard
+                task={task}
+                onStatusChange={onStatusChange}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                isDragging={draggedTask?.id === task.id}
+                canDelete={canDelete}
+                showTimestamps={true}
+              />
+            </div>
+          ))}
+          {tasks.length === 0 && (
+            <div className="text-center text-gray-400 py-12 border-2 border-dashed border-gray-200 rounded-lg">
+              <p>Drop tasks here</p>
+              <p className="text-sm">or create a new one</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <div className="space-y-6">

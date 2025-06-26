@@ -1,3 +1,4 @@
+// use client
 "use client"
 
 import { useState, useEffect, createContext, useContext, type ReactNode } from "react"
@@ -28,14 +29,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Restore session on app load
     const savedToken = localStorage.getItem("token")
     if (savedToken) {
       setToken(savedToken)
+      fetchMe(savedToken)
     } else {
       setLoading(false)
     }
   }, [])
+
+  const fetchMe = async (token: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) throw new Error("Failed to fetch user info")
+
+      const userData = await response.json()
+      setUser(userData)
+      logger.info("Fetched user info via /auth/me", userData)
+    } catch (error) {
+      logger.error("Failed to fetch user via /auth/me", error)
+      localStorage.removeItem("token")
+      setToken(null)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const login = async (email: string, password: string) => {
     try {

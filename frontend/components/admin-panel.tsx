@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CreateUserModal } from "@/components/create-user-modal"
 import { useToast } from "@/hooks/use-toast"
-import { Users, TrendingUp, Clock, CheckCircle, Plus } from "lucide-react"
+import { Users, TrendingUp, Plus } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
 import { logger } from "@/lib/logger"
 import type { CreateUserInput } from "@/lib/validation"
@@ -26,6 +26,8 @@ interface TopUserStats {
   totalTasks: number
   completedTasks: number
   totalMinutes: number
+  avgCompletionTime?: number // in hours
+  tasksCompletedThisWeek?: number
 }
 
 export function AdminPanel() {
@@ -143,32 +145,6 @@ export function AdminPanel() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{users.filter((u) => u.isAdmin).length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
-              Active Users
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{topUsers.filter((u) => u.totalTasks > 0).length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              Total Hours
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {Math.round(topUsers.reduce((sum, u) => sum + u.totalMinutes, 0) / 60)}h
-            </div>
           </CardContent>
         </Card>
       </div>

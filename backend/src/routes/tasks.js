@@ -172,25 +172,43 @@ router.post(
  *       200:
  *         description: Task updated
  */
-router.put(
-  "/:id",
+router.patch(
+  "/:id/status",
   requireAuth,
-  validate(updateTaskSchema),
+  validate(statusSchema),
   asyncHandler(async (req, res) => {
-    const task = await prisma.task.findUnique({
-      where: { id: parseInt(req.params.id) },
-    });
-    if (!task || task.userId !== req.user.id)
+    const taskId = parseInt(req.params.id);
+    const newStatus = req.validated.status;
+
+    const task = await prisma.task.findUnique({ where: { id: taskId } });
+    if (!task || (!req.user.isAdmin && task.userId !== req.user.id)) {
       return res.status(404).json({ error: "Task not found" });
+    }
+
+    const now = new Date();
+    const dataToUpdate = { status: newStatus };
+
+    if (newStatus === "IN_PROGRESS") {
+      dataToUpdate.inProgressAt = now;
+    } else if (newStatus === "DONE") {
+      dataToUpdate.completedAt = now;
+
+      if (task.inProgressAt) {
+        const ms = now.getTime() - new Date(task.inProgressAt).getTime();
+        const minutes = Math.round(ms / 60000);
+        dataToUpdate.totalMinutes = minutes;
+      }
+    }
 
     const updated = await prisma.task.update({
-      where: { id: task.id },
-      data: req.validated,
+      where: { id: taskId },
+      data: dataToUpdate,
     });
 
     res.json(updated);
   })
 );
+
 
 /**
  * @swagger
@@ -228,15 +246,27 @@ router.patch(
   requireAuth,
   validate(statusSchema),
   asyncHandler(async (req, res) => {
-    const task = await prisma.task.findUnique({
-      where: { id: parseInt(req.params.id) },
-    });
-    if (!task || task.userId !== req.user.id)
+    const taskId = parseInt(req.params.id);
+    const newStatus = req.validated.status;
+
+    const task = await prisma.task.findUnique({ where: { id: taskId } });
+    if (!task || (!req.user.isAdmin && task.userId !== req.user.id)) {
       return res.status(404).json({ error: "Task not found" });
+    }
+
+    const statusTimestamps = {};
+    if (newStatus === "IN_PROGRESS") {
+      statusTimestamps.inProgressAt = new Date();
+    } else if (newStatus === "DONE") {
+      statusTimestamps.completedAt = new Date();
+    }
 
     const updated = await prisma.task.update({
-      where: { id: task.id },
-      data: { status: req.validated.status },
+      where: { id: taskId },
+      data: {
+        status: newStatus,
+        ...statusTimestamps,
+      },
     });
 
     res.json(updated);

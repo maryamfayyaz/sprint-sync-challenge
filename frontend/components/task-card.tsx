@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Edit, Trash2, Clock, User } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { formatDistanceToNow } from "date-fns"
 
 interface TaskCardProps {
   task: Task
@@ -76,6 +77,21 @@ export function TaskCard({
     }
   }
 
+  const getStatusTimestamp = (task: Task) => {
+    switch (task.status) {
+      case "IN_PROGRESS":
+        return task.inProgressAt
+          ? `Started ${formatDistanceToNow(new Date(task.inProgressAt), { addSuffix: true })}`
+          : null
+      case "DONE":
+        return task.completedAt
+          ? `Completed ${formatDistanceToNow(new Date(task.completedAt), { addSuffix: true })}`
+          : null
+      default:
+        return null
+    }
+  }
+
   return (
     <div
       className={cn(
@@ -116,19 +132,23 @@ export function TaskCard({
       <p className="text-sm text-gray-600 mb-3 line-clamp-3">{task.description}</p>
 
       <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-        {task.totalMinutes && (
-          <div className="flex items-center">
-            <Clock className="h-3 w-3 mr-1" />
-            {task.totalMinutes}m logged
-          </div>
-        )}
-        {task.assignedUser && (
-          <div className="flex items-center">
-            <User className="h-3 w-3 mr-1" />
-            {task.assignedUser.name || task.assignedUser.email}
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {task.totalMinutes && (
+            <div className="flex items-center">
+              <Clock className="h-3 w-3 mr-1" />
+              {task.totalMinutes}m logged
+            </div>
+          )}
+          {task.assignedUser && (
+            <div className="flex items-center">
+              <User className="h-3 w-3 mr-1" />
+              {task.assignedUser.name || task.assignedUser.email}
+            </div>
+          )}
+        </div>
       </div>
+
+      {getStatusTimestamp(task) && <div className="text-xs text-gray-500 mb-3 italic">{getStatusTimestamp(task)}</div>}
 
       <Button
         size="sm"
