@@ -172,6 +172,69 @@ router.post(
  *       200:
  *         description: Task updated
  */
+router.put("/:id", requireAuth, async (req, res) => {
+  const task = await prisma.task.findUnique({ where: { id: parseInt(req.params.id) } });
+  if (!task || task.userId !== req.user.id)
+    return res.status(404).json({ error: "Task not found" });
+
+  const parsed = updateTaskSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+
+  const updated = await prisma.task.update({
+    where: { id: task.id },
+    data: parsed.data,
+  });
+
+  res.json(updated);
+});
+
+/**
+ * @swagger
+ * /tasks/{id}/status:
+ *   patch:
+ *     summary: Update the status of a task and optionally set timestamps
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the task to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [TODO, IN_PROGRESS, DONE]
+ *                 example: IN_PROGRESS
+ *     responses:
+ *       200:
+ *         description: Task updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       404:
+ *         description: Task not found or unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Task not found
+ */
+
 router.patch(
   "/:id/status",
   requireAuth,
