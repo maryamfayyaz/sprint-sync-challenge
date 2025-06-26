@@ -1,93 +1,60 @@
 # SprintSync Frontend
 
-A modern, role-based task management application built with Next.js, TypeScript, and Tailwind CSS. SprintSync provides AI-powered task suggestions, drag-and-drop Kanban boards, analytics dashboards, and comprehensive user management.
+A modern, AI-powered task management application built with Next.js, TypeScript, and Tailwind CSS. SprintSync helps fast-moving teams organize, track, and complete tasks efficiently with intelligent suggestions and comprehensive analytics.
 
-## 🚀 Features
+## ✨ Features
 
-### Core Functionality
-- **Role-Based Access Control**: Admin and user roles with different permissions
-- **Task Management**: Create, edit, delete, and track tasks with time logging
-- **Kanban Board**: Drag-and-drop interface for visual task management
-- **AI Suggestions**: Get AI-powered task descriptions and recommendations
-- **Analytics Dashboard**: Track productivity metrics and completion rates
-- **User Management**: Admin panel for creating and managing users
+### 🎯 **Core Task Management**
+- **Kanban Board**: Drag-and-drop task management with TODO, IN_PROGRESS, and DONE columns
+- **Task CRUD Operations**: Create, read, update, and delete tasks with validation
+- **Status Transitions**: Seamless task status updates with timestamp tracking
+- **Time Tracking**: Log and track time spent on tasks with analytics
+- **Task Assignment**: Assign tasks to specific users (admin feature)
 
-### User Roles
+### 🤖 **AI-Powered Features**
+- **AI Task Suggestions**: Get multiple intelligent task suggestions based on prompts
+- **Smart Task Creation**: Create tasks directly from AI suggestions with one click
+- **Contextual Recommendations**: AI analyzes your input to provide relevant task ideas
 
-#### Admin Users
-- ✅ View all tasks in the system
-- ✅ Access to Users management tab
-- ✅ Create new users with role assignment
-- ✅ Assign tasks to any user
-- ✅ Delete any task
-- ✅ Edit any task
+### 📊 **Analytics & Insights**
+- **Completion Timeline**: Track when tasks were started and completed
+- **Time Analytics**: Visualize time logged per day with interactive charts
+- **Status Distribution**: Pie charts showing task breakdown by status
+- **Performance Metrics**: Completion rates, total hours, and productivity insights
+- **Recent Activity**: Timeline of recent task updates and completions
 
-#### Regular Users
-- ✅ View only assigned tasks
-- ✅ Edit own tasks
-- ✅ Update task status
-- ✅ View personal analytics
+### 👥 **User Management**
+- **Role-Based Access**: Admin and regular user roles with different permissions
+- **User Administration**: Create and manage users (admin only)
+- **Task Assignment**: Assign tasks to specific team members
+- **Performance Tracking**: View top performers and completion statistics
 
-## 🛠️ Tech Stack
+### 🔐 **Authentication & Security**
+- **JWT Authentication**: Secure token-based authentication
+- **Role-Based Permissions**: Different access levels for admins and users
+- **Protected Routes**: Secure access to sensitive features
+- **Session Management**: Automatic token validation and refresh
 
-- **Framework**: Next.js 14 (App Router)
+### 📱 **User Experience**
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **Real-time Updates**: Optimistic updates with error handling
+- **Toast Notifications**: User-friendly success and error messages
+- **Loading States**: Clear feedback during async operations
+- **Accessibility**: WCAG compliant with proper ARIA labels
+
+## 🛠 Tech Stack
+
+- **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui + Radix UI
-- **Charts**: Recharts
-- **Validation**: Zod
+- **UI Components**: Radix UI primitives
+- **Charts**: Recharts for data visualization
 - **Icons**: Lucide React
-- **Authentication**: JWT-based with custom hooks
+- **Validation**: Zod schemas
+- **Date Handling**: date-fns
+- **HTTP Client**: Custom API client with error handling
 
-## 📁 Project Structure
-
-\`\`\`
-sprintsync-frontend/
-├── app/                          # Next.js App Router
-│   ├── globals.css              # Global styles
-│   ├── layout.tsx               # Root layout with providers
-│   ├── loading.tsx              # Loading component
-│   ├── page.tsx                 # Main dashboard
-│   └── login/
-│       └── page.tsx             # Login/register page
-├── components/                   # React components
-│   ├── ui/                      # shadcn/ui components
-│   │   ├── badge.tsx
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   ├── chart.tsx
-│   │   ├── checkbox.tsx
-│   │   ├── dialog.tsx
-│   │   ├── dropdown-menu.tsx
-│   │   ├── input.tsx
-│   │   ├── label.tsx
-│   │   ├── select.tsx
-│   │   ├── tabs.tsx
-│   │   └── textarea.tsx
-│   ├── admin-panel.tsx          # Admin user management
-│   ├── ai-suggest-modal.tsx     # AI task suggestions
-│   ├── analytics-chart.tsx      # Analytics dashboard
-│   ├── create-task-modal.tsx    # Task creation form
-│   ├── create-user-modal.tsx    # User creation form
-│   ├── edit-task-modal.tsx      # Task editing form
-│   ├── kanban-board.tsx         # Drag-and-drop board
-│   ├── profile-view.tsx         # User profile and logs
-│   ├── task-card.tsx            # Individual task component
-│   └── task-list.tsx            # Task list view
-├── hooks/                       # Custom React hooks
-│   ├── use-auth.tsx             # Authentication context
-│   └── use-toast.tsx            # Toast notifications
-├── lib/                         # Utility libraries
-│   ├── api-client.ts            # HTTP client with auth
-│   ├── logger.ts                # Logging system
-│   ├── utils.ts                 # Utility functions
-│   └── validation.ts            # Zod schemas
-├── types/                       # TypeScript definitions
-│   └── task.ts                  # Task type definitions
-└── README.md                    # This file
-\`\`\`
-
-## 🚦 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -106,302 +73,297 @@ sprintsync-frontend/
 2. **Install dependencies**
    \`\`\`bash
    npm install
-   # or
-   yarn install
    \`\`\`
 
-3. **Start the development server**
+3. **Set up environment variables**
+   \`\`\`bash
+   cp .env.example .env.local
+   \`\`\`
+   
+   Configure your environment variables:
+   \`\`\`env
+   NEXT_PUBLIC_API_URL=http://localhost:3001
+   NEXT_PUBLIC_APP_ENV=development
+   \`\`\`
+
+4. **Start the development server**
    \`\`\`bash
    npm run dev
-   # or
-   yarn dev
    \`\`\`
 
-4. **Open your browser**
+5. **Open your browser**
    Navigate to `http://localhost:3000`
 
-### Environment Setup
+### Default Login
 
-The application expects a backend API running on `http://localhost:3001`. Make sure your backend is configured with the following endpoints:
+If your backend has demo data:
+- **Email**: demo@example.com
+- **Password**: password
 
-- `POST /auth/login` - User authentication
-- `POST /auth/register` - User registration
-- `GET /tasks` - Get all tasks (admin)
-- `GET /tasks/my-tasks` - Get user's tasks
-- `POST /tasks` - Create task
-- `PUT /tasks/:id` - Update task
-- `PATCH /tasks/:id/status` - Update task status
-- `DELETE /tasks/:id` - Delete task
-- `GET /users` - Get all users (admin)
-- `POST /users` - Create user (admin)
-- `POST /ai/suggest` - AI task suggestions
+## 📁 Project Structure
 
-## 🔐 Authentication
-
-The application uses JWT-based authentication with the following flow:
-
-1. **Login/Register**: Users authenticate via `/login` page
-2. **Token Storage**: JWT tokens are stored in localStorage
-3. **Auto-redirect**: Unauthenticated users are redirected to login
-4. **Role-based UI**: Components render based on user role
-
-### Auth Hook Usage
-
-\`\`\`typescript
-import { useAuth } from '@/hooks/use-auth'
-
-function MyComponent() {
-  const { user, isAuthenticated, login, logout } = useAuth()
-  
-  if (!isAuthenticated) {
-    return <div>Please log in</div>
-  }
-  
-  return <div>Welcome, {user?.email}!</div>
-}
+\`\`\`
+sprintsync-frontend/
+├── app/                    # Next.js App Router
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx          # Dashboard page
+│   ├── login/            # Authentication pages
+│   └── loading.tsx       # Loading component
+├── components/            # React components
+│   ├── ui/               # Reusable UI components
+│   ├── ai-suggest-modal.tsx    # AI suggestions modal
+│   ├── analytics-chart.tsx     # Analytics dashboard
+│   ├── kanban-board.tsx        # Kanban board
+│   ├── task-card.tsx          # Individual task cards
+│   ├── create-task-modal.tsx   # Task creation modal
+│   ├── edit-task-modal.tsx     # Task editing modal
+│   ├── admin-panel.tsx         # Admin management
+│   └── profile-view.tsx        # User profile
+├── hooks/                 # Custom React hooks
+│   ├── use-auth.tsx      # Authentication hook
+│   └── use-toast.tsx     # Toast notifications
+├── lib/                   # Utility libraries
+│   ├── api-client.ts     # HTTP client
+│   ├── logger.ts         # Logging utility
+│   ├── utils.ts          # General utilities
+│   └── validation.ts     # Zod schemas
+├── types/                 # TypeScript definitions
+│   └── task.ts           # Task type definitions
+└── docs/                  # Documentation
+    ├── API.md            # API integration guide
+    ├── COMPONENTS.md     # Component documentation
+    └── DEPLOYMENT.md     # Deployment guide
 \`\`\`
 
-## 📋 Task Management
+## 🎭 User Roles & Permissions
 
-### Task Schema
+### 👤 **Regular User**
+- ✅ View and manage assigned tasks
+- ✅ Update task status and time logs
+- ✅ Use AI suggestions for task creation
+- ✅ View personal analytics
+- ❌ Cannot delete tasks
+- ❌ Cannot manage other users
+- ❌ Cannot assign tasks to others
 
-Tasks follow this TypeScript interface:
+### 👑 **Administrator**
+- ✅ All regular user permissions
+- ✅ View and manage all tasks in the system
+- ✅ Create and manage users
+- ✅ Assign tasks to any user
+- ✅ Delete tasks
+- ✅ Access admin panel with system statistics
+- ✅ View comprehensive analytics for all users
 
-\`\`\`typescript
-interface Task {
-  id: number
-  title: string
-  description: string
-  status: "TODO" | "IN_PROGRESS" | "DONE"
-  totalMinutes?: number
-  assignedUserId?: number
-  assignedUser?: {
-    id: number
-    email: string
-    name?: string
-  }
-  createdAt?: string
-  updatedAt?: string
-}
+## 🔄 Task Lifecycle
+
+### Status Flow
+\`\`\`
+TODO → IN_PROGRESS → DONE
+  ↑         ↑         ↓
+  └─────────┴─────────┘
 \`\`\`
 
-### Validation Schemas
+### Timestamp Tracking
+- **Created**: When task is first created
+- **In Progress**: When moved to IN_PROGRESS status (`inProgressAt`)
+- **Completed**: When moved to DONE status (`completedAt`)
+- **Updated**: Last modification timestamp
 
-**Create Task:**
-\`\`\`typescript
-const createTaskSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  totalMinutes: z.number().min(0, "Total minutes must be 0 or greater"),
-})
-\`\`\`
-
-**Update Task:**
-\`\`\`typescript
-const updateTaskSchema = z.object({
-  title: z.string().min(1, "Title is required").optional(),
-  description: z.string().min(1, "Description is required").optional(),
-  totalMinutes: z.number().min(0, "Total minutes must be 0 or greater").optional(),
-})
-\`\`\`
-
-## 🎨 UI Components
-
-The application uses shadcn/ui components for consistent design:
-
-### Key Components
-
-- **KanbanBoard**: Drag-and-drop task management
-- **TaskCard**: Individual task display with actions
-- **AnalyticsChart**: Productivity metrics and charts
-- **AdminPanel**: User management interface
-- **Modals**: Task creation, editing, and AI suggestions
-
-### Styling
-
-- **Framework**: Tailwind CSS
-- **Design System**: shadcn/ui
-- **Responsive**: Mobile-first design
-- **Dark Mode**: Ready (can be implemented)
-
-## 📊 Analytics
-
-The analytics dashboard provides:
-
-- **Task Metrics**: Total, completed, completion rate
-- **Time Tracking**: Hours logged per day
-- **Status Distribution**: Pie chart of task statuses
-- **Recent Activity**: Latest task updates
-
-### Chart Components
-
-\`\`\`typescript
-import { AnalyticsChart } from '@/components/analytics-chart'
-
-<AnalyticsChart tasks={tasks} />
-\`\`\`
+### Time Logging
+- Manual time entry in minutes
+- Cumulative tracking across status changes
+- Analytics and reporting integration
 
 ## 🤖 AI Integration
 
-AI-powered task suggestions help users create better task descriptions:
+### AI Suggest Modal
+The AI Suggest feature provides intelligent task suggestions based on user prompts:
 
+1. **Input Prompt**: User describes what they need help with
+2. **API Call**: Sends request to `/ai/suggest` endpoint
+3. **Multiple Suggestions**: Receives 3 AI-generated task suggestions
+4. **One-Click Creation**: Create tasks directly from suggestions
+5. **Smart Formatting**: Automatically cleans titles and formats descriptions
+
+### API Integration
 \`\`\`typescript
-// AI Suggest Modal
-<AISuggestModal 
-  open={aiModalOpen} 
-  onOpenChange={setAiModalOpen} 
-/>
+// Request format
+POST /ai/suggest
+{
+  "prompt": "improve user interface"
+}
+
+// Response format
+{
+  "suggestions": [
+    {
+      "title": "Revamp Task Page User Interface",
+      "description": "Enhance the design and functionality..."
+    }
+  ]
+}
 \`\`\`
 
-The AI feature calls the backend `/ai/suggest` endpoint with a task title and returns an enhanced description.
+## 📊 Analytics Features
 
-## 🔧 API Client
+### Dashboard Metrics
+- **Total Tasks**: Count of all tasks
+- **Completed Tasks**: Number of finished tasks
+- **Completion Rate**: Percentage of completed tasks
+- **Time Logged**: Total hours worked
 
-The application includes a robust API client with:
+### Charts & Visualizations
+- **Time Logged Chart**: 7-day activity timeline
+- **Status Distribution**: Pie chart of task statuses
+- **Completion Timeline**: Recent completions with timestamps
+- **Performance Trends**: User productivity metrics
 
-- **Authentication**: Automatic JWT token handling
-- **Error Handling**: Standardized error responses
-- **Logging**: Request/response logging
-- **Auto-redirect**: Handles 401 unauthorized responses
+### Admin Analytics
+- **User Statistics**: Active users, completion rates
+- **System Metrics**: Total hours, daily completion rates
+- **Top Performers**: Leaderboard with completion statistics
+- **Completion Trends**: Weekly patterns and insights
 
-### Usage Example
+## 🔧 Development
 
-\`\`\`typescript
-import { apiClient } from '@/lib/api-client'
-
-// GET request
-const tasks = await apiClient.get('/tasks')
-
-// POST request
-const newTask = await apiClient.post('/tasks', {
-  title: 'New Task',
-  description: 'Task description',
-  totalMinutes: 60
-})
-
-// PUT request
-await apiClient.put(`/tasks/${id}`, updateData)
-
-// DELETE request
-await apiClient.delete(`/tasks/${id}`)
-\`\`\`
-
-## 📝 Logging
-
-Comprehensive logging system for debugging and monitoring:
-
-\`\`\`typescript
-import { logger } from '@/lib/logger'
-
-// API calls
-logger.apiCall('GET', '/tasks')
-logger.apiSuccess('GET', '/tasks', responseTime)
-logger.apiError('GET', '/tasks', error)
-
-// General logging
-logger.info('User action', { userId: 1 })
-logger.warn('Warning message', data)
-logger.error('Error occurred', error)
-\`\`\`
-
-## 🧪 Development
-
-### Code Organization
-
-- **Components**: Reusable UI components in `/components`
-- **Hooks**: Custom React hooks in `/hooks`
-- **Types**: TypeScript definitions in `/types`
-- **Utils**: Helper functions in `/lib`
-- **Validation**: Zod schemas in `/lib/validation.ts`
-
-### Best Practices
-
-1. **TypeScript**: Strict typing for all components
-2. **Validation**: Zod schemas for all forms
-3. **Error Handling**: Comprehensive error boundaries
-4. **Accessibility**: ARIA labels and semantic HTML
-5. **Performance**: Optimistic updates and loading states
-
-### Adding New Features
-
-1. **Create Component**: Add to `/components`
-2. **Define Types**: Update `/types` if needed
-3. **Add Validation**: Create Zod schema
-4. **Update API**: Add client methods
-5. **Test**: Verify functionality
-
-## 🚀 Deployment
-
-### Build for Production
+### Available Scripts
 
 \`\`\`bash
-npm run build
-npm start
+# Development
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run type-check   # TypeScript type checking
 \`\`\`
+
+### Code Quality
+
+- **TypeScript**: Strict type checking enabled
+- **ESLint**: Code linting with Next.js rules
+- **Prettier**: Code formatting (recommended)
+- **Zod**: Runtime validation for forms and API responses
 
 ### Environment Variables
 
-Create `.env.local` for environment-specific settings:
-
 \`\`\`env
+# Required
 NEXT_PUBLIC_API_URL=http://localhost:3001
+
+# Optional
+NEXT_PUBLIC_APP_ENV=development
+NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
+NEXT_PUBLIC_GA_ID=your-google-analytics-id
 \`\`\`
 
-### Deployment Platforms
+## 🧪 Testing
 
-- **Vercel**: Recommended for Next.js apps
-- **Netlify**: Alternative static hosting
-- **Docker**: Container deployment
+### Manual Testing Checklist
+
+- [ ] User authentication (login/logout)
+- [ ] Task CRUD operations
+- [ ] Drag and drop functionality
+- [ ] AI suggestion generation
+- [ ] Task creation from AI suggestions
+- [ ] Status transitions with timestamps
+- [ ] Time logging and analytics
+- [ ] Role-based access control
+- [ ] Responsive design on mobile
+- [ ] Error handling and loading states
+
+### API Testing
+
+Ensure your backend API is running and accessible:
+
+\`\`\`bash
+# Test API connectivity
+curl http://localhost:3001/health
+
+# Test authentication
+curl -X POST http://localhost:3001/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"demo@example.com","password":"password"}'
+\`\`\`
+
+## 🚀 Deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions including:
+
+- Vercel deployment (recommended)
+- Netlify deployment
+- Docker containerization
+- AWS deployment
+- Environment configuration
+- CI/CD setup
+
+## 📚 Documentation
+
+- **[API Integration](./API.md)**: Complete API documentation
+- **[Components](./COMPONENTS.md)**: Component usage guide
+- **[Deployment](./DEPLOYMENT.md)**: Deployment instructions
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+
+- Follow TypeScript best practices
+- Use Tailwind CSS for styling
+- Implement proper error handling
+- Add loading states for async operations
+- Ensure responsive design
+- Write meaningful commit messages
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **Import Errors**: Don't include `.tsx` extensions in imports
-2. **Auth Issues**: Check backend API is running on port 3001
-3. **CORS Errors**: Ensure backend allows frontend origin
-4. **Build Errors**: Check TypeScript types and imports
+1. **API Connection Failed**
+   - Verify backend is running on `http://localhost:3001`
+   - Check CORS configuration in backend
+   - Validate environment variables
 
-### Debug Mode
+2. **Authentication Issues**
+   - Clear browser localStorage
+   - Check JWT token expiration
+   - Verify backend auth endpoints
 
-Enable detailed logging in development:
+3. **Build Errors**
+   - Run `npm install` to update dependencies
+   - Check TypeScript errors with `npm run type-check`
+   - Clear Next.js cache: `rm -rf .next`
 
-\`\`\`typescript
-// Check browser console for API logs
-// Use React DevTools for component inspection
-// Check Network tab for API requests
-\`\`\`
+4. **AI Suggestions Not Working**
+   - Verify `/ai/suggest` endpoint is available
+   - Check API response format matches expected structure
+   - Ensure proper error handling in modal
 
-## 🤝 Contributing
+### Getting Help
 
-1. **Fork** the repository
-2. **Create** a feature branch
-3. **Commit** your changes
-4. **Push** to the branch
-5. **Create** a Pull Request
-
-### Code Style
-
-- Use TypeScript for all new code
-- Follow existing component patterns
-- Add proper error handling
-- Include JSDoc comments for complex functions
+- Check the [Issues](../../issues) page for known problems
+- Review the [API Documentation](./API.md) for integration details
+- Consult the [Component Guide](./COMPONENTS.md) for usage examples
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🆘 Support
+## 🙏 Acknowledgments
 
-For support and questions:
-
-1. Check this documentation
-2. Review the code comments
-3. Check browser console for errors
-4. Verify backend API is running
-5. Create an issue in the repository
+- [Next.js](https://nextjs.org/) for the amazing React framework
+- [Tailwind CSS](https://tailwindcss.com/) for utility-first styling
+- [Radix UI](https://www.radix-ui.com/) for accessible components
+- [Recharts](https://recharts.org/) for beautiful data visualization
+- [Lucide](https://lucide.dev/) for the icon library
 
 ---
 
-**Built with ❤️ using Next.js, TypeScript, and shadcn/ui**
+**SprintSync** - Empowering teams with AI-driven task management 🚀
 
