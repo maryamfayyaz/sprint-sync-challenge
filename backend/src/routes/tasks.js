@@ -34,11 +34,33 @@ router.get(
   "/",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const tasks = await prisma.task.findMany({
-      where: { userId: req.user.id },
-      orderBy: { createdAt: "desc" },
-    });
-    res.json(tasks);
+    const where = req.user.isAdmin ? {} : { userId: req.user.id };
+
+    const [tasks, summary] = await Promise.all([
+      prisma.task.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+      }),
+      req.user.isAdmin
+        ? prisma.task.aggregate({
+            _sum: {
+              totalMinutes: true,
+            },
+          })
+        : prisma.task.groupBy({
+            by: ["userId"],
+            where,
+            _sum: {
+              totalMinutes: true,
+            },
+          }),
+    ]);
+
+    const totalMinutes = req.user.isAdmin
+      ? summary._sum?.totalMinutes || 0
+      : summary[0]?._sum?.totalMinutes || 0;
+
+    res.json({ tasks, totalMinutes });
   })
 );
 
@@ -68,7 +90,7 @@ router.get(
   requireAuth,
   asyncHandler(async (req, res) => {
     const task = await prisma.task.findUnique({
-      where: { id: parseInt(req.params.id) },
+      where: { id: req.params.id },
     });
     if (!task || task.userId !== req.user.id)
       return res.status(404).json({ error: "Task not found" });
@@ -110,8 +132,8 @@ router.post(
   asyncHandler(async (req, res) => {
     const task = await prisma.task.create({
       data: {
-        ...req.validated,
         userId: req.user.id,
+        ...req.validated,
       },
     });
 
