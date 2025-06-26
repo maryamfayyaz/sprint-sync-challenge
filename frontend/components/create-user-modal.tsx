@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/hooks/use-toast"
 import { createUserSchema, type CreateUserInput } from "@/lib/validation"
 
 interface CreateUserModalProps {
@@ -23,7 +22,6 @@ export function CreateUserModal({ open, onOpenChange, onSubmit }: CreateUserModa
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const { toast } = useToast()
 
   const validateForm = () => {
     try {

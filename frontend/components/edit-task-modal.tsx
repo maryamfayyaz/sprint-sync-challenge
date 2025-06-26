@@ -56,7 +56,8 @@ export function EditTaskModal({ open, onOpenChange, task, onSubmit, isAdmin }: E
     try {
       const data = await apiClient.get("/users")
       setUsers(data)
-    } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error: any) {
       toast({
         title: "Warning",
         description: "Could not load users for assignment",

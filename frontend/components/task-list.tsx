@@ -14,7 +14,7 @@ export function TaskList({ tasks, onStatusChange, onEdit, onDelete, canDelete = 
   const inProgressTasks = tasks.filter((task) => task.status === "IN_PROGRESS")
   const doneTasks = tasks.filter((task) => task.status === "DONE")
 
-  const TaskColumn = ({ title, tasks, status }: { title: string; tasks: Task[]; status: string }) => (
+  const TaskColumn = ({ title, tasks }: { title: string; tasks: Task[]; status: string }) => (
     <div className="flex-1 min-w-0">
       <div className="bg-white rounded-lg shadow-sm border">
         <div className="px-4 py-3 border-b bg-gray-50 rounded-t-lg">
