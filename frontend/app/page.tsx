@@ -369,7 +369,7 @@ export default function Dashboard() {
         isAdmin={user?.isAdmin || false}
       />
 
-      <AISuggestModal open={aiModalOpen} onOpenChange={setAiModalOpen} />
+      <AISuggestModal open={aiModalOpen} onOpenChange={setAiModalOpen} onTaskCreated={fetchTasks} />
     </div>
   )
 }

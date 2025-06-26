@@ -8,128 +8,215 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Bot, Copy, CheckCircle } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Bot, Plus, Sparkles, Loader2 } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
+import { useToast } from "@/hooks/use-toast"
+
+interface AISuggestion {
+  title: string
+  description: string
+}
 
 interface AISuggestModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onTaskCreated?: () => void
 }
 
-export function AISuggestModal({ open, onOpenChange }: AISuggestModalProps) {
-  const [title, setTitle] = useState("")
-  const [suggestion, setSuggestion] = useState("")
+export function AISuggestModal({ open, onOpenChange, onTaskCreated }: AISuggestModalProps) {
+  const [prompt, setPrompt] = useState("")
+  const [suggestions, setSuggestions] = useState<AISuggestion[]>([])
   const [loading, setLoading] = useState(false)
+  const [creatingTaskId, setCreatingTaskId] = useState<number | null>(null)
   const [error, setError] = useState("")
-  const [copied, setCopied] = useState(false)
+  const { toast } = useToast()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleGetSuggestions = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title.trim()) return
+    if (!prompt.trim()) return
 
     setLoading(true)
     setError("")
-    setSuggestion("")
+    setSuggestions([])
 
     try {
-      const response = await apiClient.post("/ai/suggest", { title: title.trim() })
-      setSuggestion(response.data.description)
+      const response = await apiClient.post("/ai/suggest", {
+        prompt: prompt.trim(),
+      })
+
+      if (response.suggestions && Array.isArray(response.suggestions)) {
+        setSuggestions(response.suggestions)
+      } else {
+        throw new Error("Invalid response format from AI service")
+      }
     } catch (error: any) {
-      setError(error.response?.data?.message || "Failed to get AI suggestion")
+      setError(error.response?.data?.message || error.message || "Failed to get AI suggestions")
     } finally {
       setLoading(false)
     }
   }
 
-  const handleCopy = async () => {
-    if (suggestion) {
-      await navigator.clipboard.writeText(suggestion)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+  const handleCreateTask = async (suggestion: AISuggestion, index: number) => {
+    setCreatingTaskId(index)
+
+    try {
+      // Clean the title by removing extra quotes if present
+      const cleanTitle = suggestion.title.replace(/^["']|["']$/g, "")
+
+      const taskData = {
+        title: cleanTitle,
+        description: suggestion.description,
+        totalMinutes: 0,
+      }
+
+      await apiClient.post("/tasks", taskData)
+
+      toast({
+        title: "Success",
+        description: `Task "${cleanTitle}" created successfully!`,
+      })
+
+      // Call the callback to refresh tasks
+      if (onTaskCreated) {
+        onTaskCreated()
+      }
+
+      // Close modal and reset state
+      handleClose()
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to create task",
+        variant: "destructive",
+      })
+    } finally {
+      setCreatingTaskId(null)
     }
   }
 
   const handleClose = () => {
-    setTitle("")
-    setSuggestion("")
+    setPrompt("")
+    setSuggestions([])
     setError("")
-    setCopied(false)
+    setCreatingTaskId(null)
     onOpenChange(false)
   }
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-blue-600" />
-            AI Task Suggestion
+            AI Task Suggestions
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="ai-title">Task Title</Label>
-            <Input
-              id="ai-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter a brief task title"
-              required
-            />
-          </div>
-
-          <Button
-            type="submit"
-            disabled={loading || !title.trim()}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            {loading ? "Getting AI Suggestion..." : "Get AI Suggestion"}
-          </Button>
-        </form>
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {suggestion && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label>AI Suggested Description</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleCopy}
-                className="bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-              >
-                {copied ? (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-1" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4 mr-1" />
-                    Copy
-                  </>
-                )}
-              </Button>
+        <div className="space-y-6">
+          {/* Input Form */}
+          <form onSubmit={handleGetSuggestions} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="ai-prompt">Describe what you need help with</Label>
+              <Input
+                id="ai-prompt"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="e.g., 'improve user interface', 'optimize database performance', 'add new features'"
+                required
+              />
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg border">
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{suggestion}</p>
-            </div>
-            <p className="text-xs text-gray-500">You can copy this description and use it when creating a new task.</p>
-          </div>
-        )}
 
-        <div className="flex justify-end pt-4">
+            <Button
+              type="submit"
+              disabled={loading || !prompt.trim()}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Getting AI Suggestions...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Get AI Suggestions
+                </>
+              )}
+            </Button>
+          </form>
+
+          {/* Error Display */}
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Suggestions Display */}
+          {suggestions.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-blue-600" />
+                <h3 className="font-semibold text-gray-900">AI Suggestions</h3>
+                <span className="text-sm text-gray-500">({suggestions.length} suggestions)</span>
+              </div>
+
+              <div className="space-y-3">
+                {suggestions.map((suggestion, index) => (
+                  <Card key={index} className="border border-gray-200 hover:border-blue-300 transition-colors">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base font-medium text-gray-900">
+                        {suggestion.title.replace(/^["']|["']$/g, "")}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <CardDescription className="text-sm text-gray-600 mb-4">{suggestion.description}</CardDescription>
+                      <Button
+                        onClick={() => handleCreateTask(suggestion, index)}
+                        disabled={creatingTaskId !== null}
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        {creatingTaskId === index ? (
+                          <>
+                            <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                            Creating...
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="h-3 w-3 mr-2" />
+                            Create Task
+                          </>
+                        )}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              <div className="text-xs text-gray-500 text-center">
+                Click "Create Task" to add any suggestion to your task list
+              </div>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && !error && suggestions.length === 0 && prompt && (
+            <div className="text-center py-8 text-gray-400">
+              <Bot className="h-12 w-12 mx-auto mb-3 opacity-50" />
+              <p>Enter a prompt above to get AI-powered task suggestions</p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end pt-4 border-t">
           <Button
             type="button"
             variant="outline"
             onClick={handleClose}
+            disabled={creatingTaskId !== null}
             className="bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
           >
             Close

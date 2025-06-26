@@ -1,144 +1,174 @@
-# SprintSync - Full Stack Challenge Documentation
+# 🚀 SprintSync - Full Stack Challenge Docs
 
-#Backend
-
-## Overview
-
-SprintSync is a task management application built with a modern full-stack architecture:
-
-* **Frontend**: Next.js (React)
-* **Backend**: Express.js, Prisma ORM, PostgreSQL
-* **Containerization**: Docker with Docker Compose
-* **Documentation**: Swagger (OpenAPI Spec)
+SprintSync is a modern task management application with full-stack capabilities and containerized deployment.
 
 ---
 
-## Folder Structure
+## 📂 Project Structure
 
 ```
 ├── backend
 │   ├── prisma
 │   ├── src
-│   ├── swagger
-│   └── app.js
+│   │   ├── routes
+│   │   ├── middleware
+│   │   ├── lib
+│   │   └── app.ts
+│   └── swagger
 ├── frontend
-│   └── (Next.js frontend)
 ├── docker-compose.yml
 ├── .env
-└── estimates.csv
+└── README.md
 ```
 
 ---
 
-## Setup Instructions
+## 💡 Tech Stack
 
-### 1. Prerequisites
+* **Frontend**: Next.js (React)
+* **Backend**: Express.js + TypeScript
+* **ORM**: Prisma
+* **Database**: PostgreSQL
+* **API Docs**: Swagger
+* **Authentication**: JWT
+* **Containerization**: Docker + Docker Compose
+* **Validation**: Zod
+
+---
+
+## ⚙️ Setup
+
+### Prerequisites
 
 * Node.js v22.12.0
-* Docker & Docker Compose
+* Docker + Docker Compose
 
-### 2. Local Setup
+### Install & Run
 
-1. **Install dependencies**:
-
-   ```bash
-   cd backend && pnpm install
-   cd ../frontend && pnpm install
-   ```
-2. **Database**:
-   Ensure PostgreSQL is not using port `5431` locally. Otherwise, adjust in `docker-compose.yml`.
-
-### 3. Running with Docker
+```bash
+cd backend && npm install
+cd ../frontend && npm install
+```
 
 ```bash
 docker compose up --build
 ```
 
+Visit:
+
 * Frontend: [http://localhost:3000](http://localhost:3000)
 * Backend: [http://localhost:3001](http://localhost:3001)
-* Swagger Docs: [http://localhost:3001/docs](http://localhost:3001/docs)
+* Swagger: [http://localhost:3001/docs](http://localhost:3001/docs)
 
-### 4. Seed Database
+### Seed DB
 
 ```bash
 cd backend
-pnpm prisma generate
-pnpm prisma db push
-pnpm prisma db seed
+npm prisma generate
+npm prisma db push
+npm prisma db seed
 ```
 
-Seeds:
+---
 
-* 5 Users (2 Admins)
-* Each user has 5 tasks in each status (TODO, IN\_PROGRESS, DONE)
+## 🔐 Auth
+
+### `POST /auth/login`
+
+* Authenticates user with email/password
+* Returns JWT + user data
+
+### `GET /auth/me`
+
+* Validates JWT
+* Returns current user
 
 ---
 
-## Backend Features
+## 👥 Users API
 
-### Auth
-
-* `POST /auth/login`
-
-  * Validates with Zod
-  * Returns JWT
-
-### Users
-
-* `GET /users`
-* `POST /users`
-* `PUT /users/:id`
-* `DELETE /users/:id`
-
-### Tasks
-
-* `GET /tasks`
-
-  * Admins: See all tasks
-  * Users: See own tasks
-  * Includes grouped total logged minutes
-* `POST /tasks`
-* `PUT /tasks/:id`
-* `DELETE /tasks/:id`
-
-### AI Suggestion (Stubbed)
-
-* `POST /ai/suggest`
-
-  * Placeholder for OpenAI/Anthropic integration
-
-### Validation & Errors
-
-* Reusable `parseWithZod()` utility for safe Zod schema parsing
-* Centralized async error handling with `express-async-handler`
+| Method | Endpoint    | Access | Description    |
+| ------ | ----------- | ------ | -------------- |
+| GET    | /users      | Admin  | List all users |
+| POST   | /users      | Admin  | Create user    |
+| PUT    | /users/\:id | Admin  | Update user    |
+| DELETE | /users/\:id | Admin  | Delete user    |
 
 ---
 
-## Frontend Features
+## 📄 Tasks API
 
-* Login Page with API integration
-* Task Board
+| Method | Endpoint           | Description                       |
+| ------ | ------------------ | --------------------------------- |
+| GET    | /tasks             | List tasks (admin or self)        |
+| POST   | /tasks             | Create task                       |
+| PUT    | /tasks/\:id        | Update task                       |
+| DELETE | /tasks/\:id        | Delete task                       |
+| PATCH  | /tasks/\:id/status | Change status + update timestamps |
 
-  * Create / Edit Tasks
-  * Drag & Drop to change status
-  * API connected
-* UI validated with Toast feedback
-* Fully mobile responsive
+### Status Workflow
 
----
+* `PATCH /tasks/:id/status`
 
-## Swagger/OpenAPI
-
-* Auto-generated from inline route comments
-* View at: `http://localhost:3001/docs`
-* Raw JSON: `http://localhost:3001/swagger.json`
+  * `IN_PROGRESS`: sets `inProgressAt`
+  * `DONE`: sets `completedAt` and calculates `totalMinutes`
 
 ---
 
-## Linting & Type Safety
+## 🌱 Seeding Logic
 
-* ESLint + Prettier integrated
-* Type errors fixed
-* Build passes cleanly
+* 5 users (2 Admins)
+* Each user:
+
+  * 5 TODO tasks
+  * 5 IN\_PROGRESS tasks (with `inProgressAt`)
+  * 5 DONE tasks (with `inProgressAt`, `completedAt`, `totalMinutes`)
+* `createdAt` always before `inProgressAt` and `completedAt`
+
+Run:
+
+```bash
+npm prisma db seed
+```
 
 ---
+
+## 🎨 Frontend
+
+* **Login**
+
+  * Uses `/auth/login` and `/auth/me`
+* **Task Board**
+
+  * Drag & drop task status
+  * View by status
+  * Form validation + toast feedback
+* **Admin Dashboard**
+
+  * Total users
+  * Admin count
+  * Active user count
+  * Total hours logged
+
+---
+
+## 📖 Swagger
+
+* Docs: [http://localhost:3001/docs](http://localhost:3001/docs)
+* JSON: [http://localhost:3001/swagger.json](http://localhost:3001/swagger.json)
+
+---
+
+## 📆 Linting & Type Safety
+
+* TypeScript (strict mode)
+* ESLint + Prettier
+* Zod validation for request schemas
+
+---
+
+---
+
+## 💌 Contact
+
+This project was built for a full-stack engineering challenge. Feedback is welcome!
